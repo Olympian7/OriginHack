@@ -1,0 +1,9 @@
+# Ignore all environment files that may contain secrets/API keys
+.env
+.env.*
+**/.env
+**/.env.*
+
+# Keep safe templates tracked
+!.env.example
+!**/.env.example
