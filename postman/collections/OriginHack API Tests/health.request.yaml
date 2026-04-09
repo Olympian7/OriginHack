@@ -1,0 +1,20 @@
+$kind: http-request
+method: GET
+url: '{{base_url}}/health'
+order: 1000
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Status is 200', function () {
+        pm.response.to.have.status(200);
+      });
+
+      const json = pm.response.json();
+      pm.test('Response is an object', function () {
+        pm.expect(json).to.be.an('object');
+      });
+
+      pm.test('Health response has a positive signal', function () {
+        pm.expect(JSON.stringify(json).toLowerCase()).to.match(/ok|healthy|success|up/);
+      });

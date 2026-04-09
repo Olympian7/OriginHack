@@ -1,0 +1,15 @@
+$kind: collection
+name: OriginHack API Tests
+description: Collection for testing OriginHack API (local). Variables store base_url and session_id for reuse.
+variables:
+  - key: base_url
+    value: 'http://localhost:3000'
+  - key: session_id
+    value: 'user1'
+scripts:
+  - type: "http:afterResponse"
+    language: "text/javascript"
+    code: |-
+      // Collection-level after response script placeholder
+      // Individual requests include practical tests
+order: 1000

@@ -1,0 +1,23 @@
+$kind: http-request
+method: POST
+url: '{{base_url}}/api/conversation/audio'
+order: 2000
+body:
+  type: formdata
+  content:
+    - key: sessionId
+      type: text
+      value: ''
+      description: Intentionally blank for validation test
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Status is validation failure', function () {
+        pm.expect(pm.response.code).to.be.oneOf([400, 422]);
+      });
+
+      const bodyText = pm.response.text();
+      pm.test('Validation error mentions audio or session', function () {
+        pm.expect(bodyText.toLowerCase()).to.match(/invalid|required|audio|session/);
+      });

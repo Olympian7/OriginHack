@@ -1,0 +1,17 @@
+$kind: http-request
+method: GET
+url: '{{base_url}}/api/conversation/text'
+order: 3000
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Status is 405 Method Not Allowed', function () {
+        pm.response.to.have.status(405);
+      });
+
+      pm.test('Allow or error signal is present', function () {
+        const allow = pm.response.headers.get('Allow');
+        const bodyText = pm.response.text().toLowerCase();
+        pm.expect(Boolean(allow) || /method|not allowed/.test(bodyText)).to.eql(true);
+      });

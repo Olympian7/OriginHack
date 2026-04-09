@@ -1,0 +1,44 @@
+$kind: http-request
+method: POST
+url: '{{base_url}}/api/conversation/audio'
+order: 1000
+body:
+  type: formdata
+  content:
+    - key: sessionId
+      type: text
+      value: '{{session_id}}'
+      description: Session identifier
+    - key: audio
+      type: file
+      src: '{{audio_file_path}}'
+      description: Select a local audio file manually if variable-based file attachment is unsupported
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test('Status is success', function () {
+        pm.expect(pm.response.code).to.be.oneOf([200, 201]);
+      });
+
+      const json = pm.response.json();
+      pm.test('Audio response is JSON object', function () {
+        pm.expect(json).to.be.an('object');
+      });
+
+      pm.test('Response includes conversation or generated audio data', function () {
+        pm.expect(JSON.stringify(json)).to.match(/message|response|reply|audio|url/i);
+      });
+
+      const audioUrl = json.generated_audio_url || json.generatedAudioUrl || json.audio_url || json.audioUrl || json.url;
+      if (audioUrl) {
+        pm.collectionVariables.set('generated_audio_url', audioUrl);
+      }
+
+      pm.test('generated_audio_url saved when present', function () {
+        if (audioUrl) {
+          pm.expect(pm.collectionVariables.get('generated_audio_url')).to.eql(audioUrl);
+        } else {
+          pm.expect(true).to.eql(true);
+        }
+      });

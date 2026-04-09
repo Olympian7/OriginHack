@@ -1,0 +1,22 @@
+name: OriginHack Local
+values:
+  - key: base_url
+    value: 'http://localhost:3000'
+    enabled: true
+    type: default
+  - key: session_id
+    value: 'user1'
+    enabled: true
+    type: default
+  - key: text_message
+    value: 'Hello, I want guidance about my career'
+    enabled: true
+    type: default
+  - key: audio_file_path
+    value: ''
+    enabled: true
+    type: default
+  - key: generated_audio_url
+    value: ''
+    enabled: true
+    type: default
