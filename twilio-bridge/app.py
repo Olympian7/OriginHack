@@ -1,10 +1,11 @@
 import logging
 import os
 import time
+from urllib.parse import urlparse
 
 import requests
 from dotenv import load_dotenv
-from flask import Flask, Response, request
+from flask import Flask, Response, abort, request
 from twilio.twiml.voice_response import VoiceResponse
 
 load_dotenv()
@@ -24,6 +25,10 @@ BACKEND_AUDIO_ENDPOINT = os.getenv(
     "BACKEND_AUDIO_ENDPOINT",
     "http://localhost:3000/api/conversation/audio"
 )
+BACKEND_BASE_URL = os.getenv(
+    "BACKEND_BASE_URL",
+    "http://localhost:3000"
+).strip().rstrip("/")
 BASE_URL = (
     os.getenv("BASE_URL", "").strip()
     or os.getenv("NGROK_URL", "").strip()
@@ -32,17 +37,18 @@ BASE_URL = (
 TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID", "").strip()
 TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN", "").strip()
 HTTP_TIMEOUT_SECONDS = int(os.getenv("HTTP_TIMEOUT_SECONDS", "20"))
+BACKEND_AUDIO_TIMEOUT_SECONDS = int(os.getenv("BACKEND_AUDIO_TIMEOUT_SECONDS", "12"))
 
 
 def build_record_twiml(vr: VoiceResponse) -> None:
-    if not BASE_URL:
-        raise RuntimeError("BASE_URL is required for absolute Twilio action URLs")
+    action_base = BASE_URL or request.url_root.rstrip("/")
 
     vr.record(
-        action=f"{BASE_URL}/process-recording",
+        action=f"{action_base}/process-recording",
         method="POST",
         max_length=4,
         timeout=2,
+        play_beep=True,
         trim="trim-silence"
     )
 
@@ -51,14 +57,37 @@ def ensure_public_audio_url(node_audio_url: str) -> str:
     if not node_audio_url:
         return ""
 
-    if "http://localhost:3000" in node_audio_url and not BASE_URL:
-        logging.error("BASE_URL is not set for localhost audio URL rewrite")
-        return ""
+    if not BASE_URL:
+        return node_audio_url
 
-    if "http://localhost:3000" in node_audio_url:
-        return node_audio_url.replace("http://localhost:3000", BASE_URL)
+    parsed = urlparse(node_audio_url)
+    if parsed.scheme in {"http", "https"} and parsed.path.startswith("/audio/"):
+        return f"{BASE_URL}{parsed.path}"
 
     return node_audio_url
+
+
+@app.route("/audio/<path:file_name>", methods=["GET"])
+def proxy_audio(file_name: str) -> Response:
+    source_url = f"{BACKEND_BASE_URL}/audio/{file_name}"
+
+    try:
+        upstream = requests.get(source_url, stream=True, timeout=HTTP_TIMEOUT_SECONDS)
+    except requests.RequestException as error:
+        logging.error("Audio proxy request failed url=%s error=%s", source_url, str(error))
+        abort(502)
+
+    if not upstream.ok:
+        logging.error("Audio proxy upstream failed status=%s url=%s", upstream.status_code, source_url)
+        abort(upstream.status_code)
+
+    def stream_chunks():
+        for chunk in upstream.iter_content(chunk_size=8192):
+            if chunk:
+                yield chunk
+
+    mimetype = upstream.headers.get("Content-Type", "audio/mpeg")
+    return Response(stream_chunks(), mimetype=mimetype)
 
 
 def download_twilio_recording(recording_url: str) -> bytes:
@@ -103,7 +132,7 @@ def call_node_audio_api(audio_bytes: bytes, session_id: str) -> dict:
         BACKEND_AUDIO_ENDPOINT,
         files=files,
         data=data,
-        timeout=30
+        timeout=BACKEND_AUDIO_TIMEOUT_SECONDS
     )
     if not response.ok:
         logging.error("Node audio API failed status=%s body=%s", response.status_code, response.text)
@@ -118,6 +147,15 @@ def call_node_audio_api(audio_bytes: bytes, session_id: str) -> dict:
 @app.route("/incoming_call", methods=["GET", "POST"])
 def incoming_call() -> Response:
     logging.info("Incoming request /incoming_call method=%s", request.method)
+
+    # Twilio sends form-encoded payload on POST; consume it to avoid upstream
+    # socket churn that can surface as ngrok ERR_NGROK_3004.
+    if request.method == "POST":
+        try:
+            payload = dict(request.form)
+            logging.info("Incoming call payload keys=%s", list(payload.keys()))
+        except Exception as error:
+            logging.warning("Unable to parse incoming_call form payload: %s", str(error))
 
     response = VoiceResponse()
     response.say("Speak after the beep.", voice="alice")
@@ -179,4 +217,4 @@ def health() -> dict:
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", "5000"))
-    app.run(host="0.0.0.0", port=port, debug=False)
+    app.run(host="0.0.0.0", port=port, debug=False, threaded=True)

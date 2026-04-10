@@ -1,8 +1,10 @@
 const dotenv = require('dotenv');
 const path = require('path');
 
+const backendRootDir = path.resolve(__dirname, '../..');
+
 dotenv.config({
-  path: path.resolve(process.cwd(), '.env'),
+  path: path.join(backendRootDir, '.env'),
   override: true
 });
 

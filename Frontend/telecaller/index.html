@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telepathy | Executive Command</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="site-data.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        accent: 'var(--accent)',
+                        panel: 'var(--panel)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="opacity-0 overflow-x-hidden dashboard-view">
+    <canvas id="star-canvas"></canvas>
+
+    <main id="parallax-container" class="container py-20 pb-40">
+        <header class="mb-20 stagger-item flex justify-between items-center px-4">
+            <div>
+                <h1 class="text-5xl md:text-6xl mb-4 cinzel-light text-white tracking-tight uppercase">Welcome Admin!</h1>
+                <p class="text-secondary text-2xl font-light">Your celestial outreach network is synchronized for deep planetary guidance.</p>
+            </div>
+            <div class="flex items-center gap-8">
+                 <div class="w-24 h-24 rounded-full border-4 border-accent/20 overflow-hidden shadow-2xl">
+                    <img src="image.png" alt="Admin" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=admin'">
+                 </div>
+            </div>
+        </header>
+
+        <!-- SECTION: CELESTIAL SUMMARY -->
+        <div class="stagger-item">
+            <h2 class="section-heading pl-5">Celestial Summary</h2>
+            <div class="nav-grid mb-16 px-4">
+                <div class="card">
+                    <p class="stat-label uppercase text-secondary mb-3">Global sessions</p>
+                    <div class="stat-value">0</div>
+                </div>
+                <div class="card">
+                    <p class="stat-label uppercase text-secondary mb-3">Lead Repository</p>
+                    <div class="stat-value text-accent">0</div>
+                </div>
+                <div class="card">
+                    <p class="stat-label uppercase text-secondary mb-3">NLU Precision</p>
+                    <div class="stat-value text-accent">0%</div>
+                </div>
+                <div class="card">
+                    <p class="stat-label uppercase text-secondary mb-3">Conversion Rate</p>
+                    <div class="stat-value text-green-400">0%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION: OPERATIONAL GATEWAYS (SYMBOLS + 7 DAYS) -->
+        <div class="stagger-item">
+            <h2 class="section-heading pl-5">Operational Gateways</h2>
+            <div class="nav-grid mb-24 items-center px-4">
+                <a href="analytics.html" class="circle-portal" style="background-image: url('cute_planet_analytics_1775760334883.png');">
+                    <div class="gateway-symbol font-serif">♍</div>
+                    <h2>Analytics</h2>
+                </a>
+
+                <a href="campaigns.html" class="circle-portal" style="background-image: url('cute_planet_initiate_1775760369619.png');">
+                    <div class="gateway-symbol font-serif">♈</div>
+                    <h2>Initiate Call</h2>
+                </a>
+
+                <a href="contacts.html" class="circle-portal" style="background-image: url('cute_planet_leads_v2_1775760678595.png');">
+                    <div class="gateway-symbol font-serif">♉</div>
+                    <h2>Lead Data</h2>
+                </a>
+
+                <a href="call-logs.html" class="circle-portal" style="background-image: url('cute_planet_logs_v2_1775760702864.png');">
+                    <div class="gateway-symbol font-serif">♏</div>
+                    <h2>Logs</h2>
+                </a>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-10 mb-24 stagger-item px-4">
+            <!-- CONV RATE & ENGAGEMENT (Replaces Weekly Resonance) -->
+            <div id="engagement-card" class="card lg:col-span-1 border-white/5">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="text-xs uppercase tracking-widest text-accent font-bold">Engagement Matrix</h3>
+                    <i data-lucide="bar-chart-2" class="w-5 h-5 text-accent"></i>
+                </div>
+                <div class="space-y-6">
+                    <div>
+                        <div class="flex justify-between mb-2"><span class="text-[10px] text-white font-bold uppercase tracking-widest">Conversion Rate</span><span class="text-[10px] font-bold text-accent">0%</span></div>
+                        <div class="h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5"><div class="h-full bg-accent w-[0%] shadow-[0_0_15px_rgba(212,175,55,0.4)]"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-2"><span class="text-[10px] text-white font-bold uppercase tracking-widest">Active Engagement</span><span class="text-[10px] font-bold text-blue-400">0%</span></div>
+                        <div class="h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5"><div class="h-full bg-blue-400 w-[0%] shadow-[0_0_15px_rgba(96,165,250,0.4)]"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-2"><span class="text-[10px] text-white font-bold uppercase tracking-widest">Drop-off Flux</span><span class="text-[10px] font-bold text-red-500">0%</span></div>
+                        <div class="h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5"><div class="h-full bg-red-500 w-[0%] shadow-[0_0_15px_rgba(239,68,68,0.4)]"></div></div>
+                    </div>
+                    <div class="mt-8 pt-6 border-t border-white/5">
+                        <p class="text-[9px] text-gray-400 uppercase tracking-widest leading-loose">Engagement metrics are highly stable across the current planetary alignment.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SENTIMENT MATRIX (CLEAN NO EMOJI) -->
+            <div class="card lg:col-span-1">
+                <h3 class="text-xs uppercase tracking-widest text-white font-bold mb-10">Sentiment Matrix</h3>
+                <div class="h-44 relative mb-10">
+                    <canvas id="sentimentChart"></canvas>
+                </div>
+                <div class="space-y-5">
+                    <div class="flex items-center justify-between"><div class="flex items-center gap-3"><div class="w-3 h-3 rounded-full bg-green-500"></div> <span class="font-bold">Positive</span></div><span id="sentiment-positive" class="text-xl text-green-400 font-bold">0%</span></div>
+                    <div class="flex items-center justify-between"><div class="flex items-center gap-3"><div class="w-3 h-3 rounded-full bg-blue-500"></div> <span class="font-bold">Neutral</span></div><span id="sentiment-neutral" class="text-xl text-blue-400 font-bold">0%</span></div>
+                </div>
+            </div>
+
+            <!-- SEEKER INSIGHT LEDGER (CLEAN) -->
+            <div class="card lg:col-span-2">
+                <div class="flex justify-between items-center mb-10 px-2">
+                    <h3 class="text-xs uppercase tracking-widest text-white font-bold">Upcoming Calls</h3>
+                    <button class="btn-creative-add px-6 py-2 !text-xs">Export Ledger</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="formal-table">
+                        <thead>
+                            <tr class="text-secondary text-xs uppercase tracking-widest"><th class="pb-6">Identity Node</th><th>Alignment</th><th>Status</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="3" class="text-center text-secondary text-sm">No calls yet. Trigger a call to populate live data.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+        window.addEventListener('DOMContentLoaded', async () => {
+             gsap.to("body", { opacity: 1, scale: 1, duration: 1.2, ease: "expo.out" });
+             gsap.to(".stagger-item", { opacity: 1, y: 0, duration: 1.5, stagger: 0.2, ease: "expo.out" });
+             const data = await window.TelecallerSite.loadSafe();
+             renderDashboard(data.dashboard);
+             initDashboardCharts(data.dashboard);
+             initConstellation();
+        });
+        document.addEventListener('mousemove', (e) => {
+            const moveX = (e.clientX - window.innerWidth/2) * 0.01;
+            const moveY = (e.clientY - window.innerHeight/2) * 0.01;
+            gsap.to("#parallax-container", { x: moveX, y: moveY, duration: 0.5, ease: "power2.out" });
+        });
+        function initConstellation() {
+            const canvas = document.getElementById('star-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            const mouse = { x: null, y: null, radius: 150 };
+            window.addEventListener('mousemove', e => { mouse.x = e.x; mouse.y = e.y; });
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2 + 0.5; this.speedX = Math.random() * 1.5 - 0.75; this.speedY = Math.random() * 1.5 - 0.75;
+                    this.color = '#D4AF37';
+                }
+                update() {
+                    this.x += this.speedX; this.y += this.speedY;
+                    if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
+                    if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+                    let dx = mouse.x - this.x; let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx*dx + dy*dy);
+                    if (distance < mouse.radius) { this.x -= dx/20; this.y -= dy/20; }
+                }
+                draw() { ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
+            }
+            const init = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; particles = []; for(let i=0; i<120; i++) particles.push(new Particle()); }
+            const connect = () => {
+                for(let a=0; a<particles.length; a++) {
+                    for(let b=a; b<particles.length; b++) {
+                        let distance = ((particles[a].x - particles[b].x) * (particles[a].x - particles[b].x)) + ((particles[a].y - particles[b].y) * (particles[a].y - particles[b].y));
+                        if(distance < (canvas.width/7) * (canvas.height/7)) {
+                            let opacity = 1 - (distance/20000);
+                            ctx.strokeStyle = `rgba(212, 175, 55, ${opacity * 0.2})`; ctx.lineWidth = 1; ctx.beginPath();
+                            ctx.moveTo(particles[a].x, particles[a].y); ctx.lineTo(particles[b].x, particles[b].y); ctx.stroke();
+                        }
+                    }
+                }
+            }
+            const animate = () => { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p => { p.update(); p.draw(); }); connect(); requestAnimationFrame(animate); }
+            window.addEventListener('resize', init); init(); animate();
+        }
+        function renderDashboard(dashboard) {
+            const summaryValues = document.querySelectorAll('.nav-grid.mb-16 .card .stat-value');
+            if (summaryValues.length >= 4) {
+                summaryValues[0].textContent = dashboard.summary.globalSessions;
+                summaryValues[1].textContent = dashboard.summary.leadRepository;
+                summaryValues[2].textContent = dashboard.summary.nluPrecision;
+                summaryValues[3].textContent = dashboard.summary.conversionRate;
+            }
+
+            const engagementCard = document.getElementById('engagement-card');
+            if (!engagementCard) {
+                return;
+            }
+            const engagementNumbers = engagementCard.querySelectorAll('.flex.justify-between.mb-2 span:last-child');
+            if (engagementNumbers.length >= 3) {
+                engagementNumbers[0].textContent = `${dashboard.engagement.conversionRate}%`;
+                engagementNumbers[1].textContent = `${dashboard.engagement.activeEngagement}%`;
+                engagementNumbers[2].textContent = `${dashboard.engagement.dropOffFlux}%`;
+            }
+
+            const progressBars = engagementCard.querySelectorAll('.h-2 .h-full');
+            if (progressBars.length >= 3) {
+                progressBars[0].style.width = `${dashboard.engagement.conversionRate}%`;
+                progressBars[1].style.width = `${dashboard.engagement.activeEngagement}%`;
+                progressBars[2].style.width = `${dashboard.engagement.dropOffFlux}%`;
+            }
+
+            const positive = document.getElementById('sentiment-positive');
+            const neutral = document.getElementById('sentiment-neutral');
+            positive.textContent = `${dashboard.sentiment[0] || 0}%`;
+            neutral.textContent = `${dashboard.sentiment[1] || 0}%`;
+
+            const upcomingBody = document.querySelector('.formal-table tbody');
+            if (!dashboard.upcomingCalls || !dashboard.upcomingCalls.length) {
+                upcomingBody.innerHTML = '<tr><td colspan="3" class="text-center text-secondary text-sm">No calls yet. Trigger a call to populate live data.</td></tr>';
+                return;
+            }
+
+            upcomingBody.innerHTML = dashboard.upcomingCalls.map((call) => `
+                <tr>
+                    <td><span class="block font-bold text-white text-xl">${call.name}</span><span class="block text-[10px] text-secondary font-black tracking-widest mt-1 uppercase">${call.node}</span></td>
+                    <td class="font-bold text-accent text-lg">${call.alignment}</td>
+                    <td><span class="text-green-400 bg-green-400/10 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-green-400/20">${call.status}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function initDashboardCharts(dashboard) {
+            const ctxSent = document.getElementById('sentimentChart').getContext('2d');
+            new Chart(ctxSent, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Positive', 'Neutral', 'Negative'],
+                    datasets: [{ data: dashboard.sentiment, backgroundColor: ['#10B981', '#3B82F6', '#EF4444'], borderWidth: 0 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, cutout: '75%' }
+            });
+        }
+    </script>
+</body>
+</html>

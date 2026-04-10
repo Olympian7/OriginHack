@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telepathy | System Chronicles</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="site-data.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        accent: 'var(--accent)',
+                        panel: 'var(--panel)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="opacity-0">
+    <canvas id="star-canvas"></canvas>
+
+    <main class="container py-16">
+        <header class="mb-12 stagger-item px-4">
+            <h1 class="text-7xl mb-2 cinzel-light text-white">System Chronicles</h1>
+            <p class="text-secondary text-2xl font-light">Audit and replay planetary marketing interactions.</p>
+        </header>
+
+        <div class="card stagger-item !p-0 overflow-hidden border-white/5">
+            <div class="overflow-x-auto">
+                <table class="formal-table">
+                    <thead>
+                        <tr class="bg-white/5">
+                            <th class="pl-8">Session ID</th>
+                            <th>Seeker Node</th>
+                            <th>Time Sync</th>
+                            <th class="w-[30%]">Vedic Review</th>
+                            <th class="w-[20%]">Session Assets</th>
+                            <th class="pr-8 text-right">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="6" class="text-center text-secondary text-sm">No call logs yet. Trigger a call to start live updates.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="back-btn-wrapper">
+            <a href="index.html" class="back-btn">
+                <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                Back to Hub
+            </a>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+        window.addEventListener('DOMContentLoaded', async () => {
+             gsap.to("body", { opacity: 1, duration: 0.8 });
+             gsap.to(".stagger-item", { opacity: 1, y: 0, duration: 1.2, stagger: 0.1, ease: "expo.out" });
+
+                 const data = await window.TelecallerSite.loadSafe();
+             const tableBody = document.querySelector('.formal-table tbody');
+                 if (!data.callLogs || !data.callLogs.length) {
+                     tableBody.innerHTML = '<tr><td colspan="6" class="text-center text-secondary text-sm">No call logs yet. Trigger a call to start live updates.</td></tr>';
+                     return;
+                 }
+
+             tableBody.innerHTML = data.callLogs.map((log) => `
+                <tr>
+                    <td class="pl-8">
+                        <span class="block font-bold text-white text-lg">${log.sessionId}</span>
+                        <span class="text-[9px] text-accent uppercase font-black tracking-widest mt-1">${log.plan}</span>
+                    </td>
+                    <td>
+                        <span class="block font-bold text-white">${log.seeker}</span>
+                        <span class="text-[10px] text-secondary">Live record</span>
+                    </td>
+                    <td class="text-secondary font-medium">${new Date(log.timestamp).toLocaleString()}</td>
+                    <td class="text-sm italic text-gray-400 py-6 pr-6 leading-relaxed">${log.review}</td>
+                    <td class="py-6 pr-6 bg-white/[0.01]">
+                        <div class="flex flex-col gap-3">
+                            <button class="flex justify-center items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white bg-accent/20 border border-accent/40 px-4 py-2 rounded-lg hover:bg-accent hover:text-black transition-all w-full"><i data-lucide="play-circle" class="w-4 h-4"></i> Call Recording</button>
+                            <button class="flex justify-center items-center gap-2 text-[10px] font-black uppercase tracking-widest text-secondary bg-white/5 border border-white/10 px-4 py-2 rounded-lg hover:bg-white/10 hover:text-white transition-all w-full"><i data-lucide="file-text" class="w-4 h-4"></i> Full Transcript</button>
+                        </div>
+                    </td>
+                    <td class="pr-8 text-right">
+                        <span class="${log.status === 'Synced' ? 'text-green-400 bg-green-400/10 border-green-400/20' : 'text-red-400 bg-red-400/10 border-red-400/20'} inline-block whitespace-nowrap px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border">${log.status}</span>
+                    </td>
+                </tr>
+             `).join('');
+             lucide.createIcons();
+        });
+        const canvas = document.getElementById('star-canvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        const init = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; stars=[]; for(let i=0; i<200; i++) stars.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, size:Math.random()*1, speed:Math.random()*0.1+0.05}); }
+        const animate = () => { ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = '#D4AF37'; stars.forEach(s => { ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2); ctx.fill(); s.y += s.speed; if (s.y > canvas.height) s.y = 0; }); requestAnimationFrame(animate); }
+        window.addEventListener('resize', init); init(); animate();
+    </script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telepathy | Initiate Call</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="site-data.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        accent: 'var(--accent)',
+                        panel: 'var(--panel)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="opacity-0">
+    <canvas id="star-canvas"></canvas>
+
+    <main class="container py-12 px-6">
+        <header class="mb-10 text-center stagger-item">
+            <h1 class="text-5xl mb-1 cinzel-light text-white">Initiate Call</h1>
+            <p class="text-secondary text-xl font-light">Deploy planetary voice nodes and synchronize rituals.</p>
+        </header>
+
+        <!-- CELESTIAL CONTROL -->
+        <div class="flex flex-col items-center mb-12 stagger-item">
+            <div class="card !bg-accent/5 border-accent/20 !p-10 max-w-lg w-full text-center">
+                <h3 class="text-[10px] uppercase tracking-[0.3em] text-accent font-bold mb-10">Celestial Call Control</h3>
+                <div class="flex justify-center gap-16 mb-8">
+                    <button id="start-call-button" type="button" class="w-20 h-20 rounded-full shadow-[0_10px_30px_rgba(34,197,94,0.3)] hover:scale-110 transition-all active:scale-95 flex items-center justify-center bg-[#22c55e]">
+                        <i data-lucide="phone" class="w-8 h-8 text-white fill-white"></i>
+                    </button>
+                    <button id="stop-call-button" type="button" class="w-20 h-20 rounded-full shadow-[0_10px_30px_rgba(239,68,68,0.3)] hover:scale-110 transition-all active:scale-95 flex items-center justify-center bg-[#ef4444] rotate-[135deg]">
+                        <i data-lucide="phone" class="w-8 h-8 text-white fill-white"></i>
+                    </button>
+                </div>
+                
+                <!-- NEW: SYSTEM SPECIFICATIONS SEGMENT -->
+                <div class="mt-8 pt-8 border-t border-white/5 grid grid-cols-2 gap-4 text-left">
+                    <div class="space-y-1">
+                        <span class="text-[9px] uppercase tracking-widest text-secondary font-bold">Neural Model</span>
+                        <p class="text-xs text-white font-bold tracking-tight">Telepathy-V4.5-LLM</p>
+                    </div>
+                    <div class="space-y-1">
+                        <span class="text-[9px] uppercase tracking-widest text-secondary font-bold">Voice Synthesis</span>
+                        <p class="text-xs text-white font-bold tracking-tight">Vedic Hybrid Node (Male)</p>
+                    </div>
+                    <div class="space-y-1">
+                        <span class="text-[9px] uppercase tracking-widest text-secondary font-bold">Latency Offset</span>
+                        <p class="text-xs text-blue-400 font-bold tracking-tight">~0.4s Optimized</p>
+                    </div>
+                    <div class="space-y-1">
+                        <span class="text-[9px] uppercase tracking-widest text-secondary font-bold">Encryption</span>
+                        <p class="text-xs text-green-400 font-bold tracking-tight">Quantum-Vedic SSL</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6">
+                <span class="text-[10px] text-accent font-bold uppercase tracking-[0.4em] animate-pulse">Matrix Status: Active & Synced</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-12">
+            <!-- CONSULTATION CONFIGURATION -->
+            <div class="lg:col-span-3 card stagger-item px-10">
+                <h3 class="text-xs uppercase tracking-[0.2em] text-accent font-bold mb-10">Campaign Tuning</h3>
+                <form id="campaign-form" class="space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="flex flex-col gap-2">
+                            <label class="text-[10px] uppercase font-black text-secondary tracking-widest">Purpose</label>
+                            <select id="purpose-select" class="bg-white/5 border border-white/10 rounded-lg p-3 text-sm text-white focus:border-accent outline-none appearance-none cursor-pointer">
+                                <option class="bg-[#1a1a1c]">Marketing Outreach</option>
+                                <option class="bg-[#1a1a1c]">Customer Support</option>
+                                <option class="bg-[#1a1a1c]">Feedback Collection</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="text-[10px] uppercase font-black text-secondary tracking-widest">Voice Tone</label>
+                            <select id="tone-select" class="bg-white/5 border border-white/10 rounded-lg p-3 text-sm text-white focus:border-accent outline-none appearance-none cursor-pointer">
+                                <option class="bg-[#1a1a1c]">Formal / Vedic</option>
+                                <option class="bg-[#1a1a1c]">Friendly / Casual</option>
+                            </select>
+                        </div>
+                    </div>
+                    <textarea id="blueprint-input" rows="4" placeholder="AI Behavioral Blueprint..." class="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-sm text-white focus:border-accent outline-none transition-all"></textarea>
+                    <button id="deploy-btn" type="submit" class="btn-primary w-full py-4 text-[10px] tracking-[0.3em] font-black shadow-[0_10px_30px_rgba(212,175,55,0.2)]">INITIATE CALL</button>
+                </form>
+
+                <div id="campaign-response" class="hidden mt-8 rounded-xl border border-accent/20 bg-white/5 p-6">
+                    <p id="campaign-status" class="text-[10px] tracking-[0.2em] uppercase font-black text-accent mb-4">Connected</p>
+                    <p id="campaign-reply" class="text-sm text-gray-200 leading-relaxed"></p>
+                    <audio id="campaign-audio" class="mt-4 w-full hidden" controls preload="none"></audio>
+                </div>
+            </div>
+
+            <!-- COMPACT TUNING BOX -->
+            <div class="card stagger-item !p-6 self-start">
+                 <h3 class="text-[10px] uppercase tracking-[0.2em] text-accent font-bold mb-8">Parameters</h3>
+                 <div class="space-y-8">
+                    <div>
+                        <div class="flex justify-between mb-3"><label class="text-[10px] text-white font-bold mb-0">Sensitivity</label><span class="text-[10px] text-accent font-bold uppercase">Active</span></div>
+                        <div class="h-1 w-full bg-white/10 rounded-full"><div class="h-full bg-accent w-[80%] shadow-[0_0_10px_var(--accent)]"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-3"><label class="text-[10px] text-white font-bold mb-0">Formality</label><span class="text-[10px] text-accent font-bold uppercase">90%</span></div>
+                        <div class="h-1 w-full bg-white/10 rounded-full"><div class="h-full bg-accent w-[90%] shadow-[0_0_10px_var(--accent)]"></div></div>
+                    </div>
+                 </div>
+            </div>
+        </div>
+        <div class="back-btn-wrapper">
+            <a href="index.html" class="back-btn">
+                <i data-lucide="layout-grid" class="w-4 h-4"></i>
+                Back to Hub
+            </a>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+           window.addEventListener('DOMContentLoaded', async () => {
+             gsap.to("body", { opacity: 1, duration: 0.8 });
+             gsap.to(".stagger-item", { opacity: 1, y: 0, duration: 1.2, stagger: 0.1, ease: "expo.out" });
+
+             const data = await window.TelecallerSite.loadSafe();
+               document.querySelector('header p').textContent = data.campaign.goal;
+               document.querySelector('.lg\\:col-span-3.card.stagger-item.px-10 h3').textContent = data.campaign.businessName;
+               const purposeSelect = document.getElementById('purpose-select');
+               purposeSelect.innerHTML = data.campaign.services.map((service) => `<option class="bg-[#1a1a1c]">${service}</option>`).join('');
+        });
+
+        const campaignForm = document.getElementById('campaign-form');
+         const startCallButton = document.getElementById('start-call-button');
+        const deployButton = document.getElementById('deploy-btn');
+        const purposeSelect = document.getElementById('purpose-select');
+        const toneSelect = document.getElementById('tone-select');
+        const blueprintInput = document.getElementById('blueprint-input');
+        const responsePanel = document.getElementById('campaign-response');
+        const statusText = document.getElementById('campaign-status');
+        const replyText = document.getElementById('campaign-reply');
+        const audioPlayer = document.getElementById('campaign-audio');
+
+        async function triggerCall(event) {
+            if (event) {
+                event.preventDefault();
+            }
+
+            deployButton.disabled = true;
+            startCallButton.disabled = true;
+            deployButton.textContent = 'CALLING...';
+            responsePanel.classList.remove('hidden');
+            statusText.textContent = 'Processing';
+            replyText.textContent = 'Launching the Python trigger script on the backend...';
+            audioPlayer.classList.add('hidden');
+            audioPlayer.removeAttribute('src');
+
+            try {
+                const response = await fetch('/api/calls/trigger', {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Unable to start the call right now');
+                }
+
+                statusText.textContent = 'Call Started';
+                if (data.callSid) {
+                    const totalCalls = data.metrics && data.metrics.totalMade ? data.metrics.totalMade : 0;
+                    replyText.textContent = `Call SID: ${data.callSid} | Total Calls: ${totalCalls}`;
+                } else {
+                    replyText.textContent = data.output || data.message || 'Call trigger completed.';
+                }
+            } catch (error) {
+                statusText.textContent = 'Failed';
+                replyText.textContent = error.message;
+            } finally {
+                deployButton.disabled = false;
+                startCallButton.disabled = false;
+                deployButton.textContent = 'INITIATE CALL';
+            }
+        }
+
+        campaignForm.addEventListener('submit', triggerCall);
+        startCallButton.addEventListener('click', triggerCall);
+
+        const canvas = document.getElementById('star-canvas');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        const init = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; stars=[]; for(let i=0; i<150; i++) stars.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, size:Math.random()*0.8, speed:Math.random()*0.1+0.05}); }
+        const animate = () => { ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle = '#D4AF37'; stars.forEach(s => { ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2); ctx.fill(); s.y += s.speed; if (s.y > canvas.height) s.y = 0; }); requestAnimationFrame(animate); }
+        window.addEventListener('resize', init); init(); animate();
+    </script>
+</body>
+</html>
