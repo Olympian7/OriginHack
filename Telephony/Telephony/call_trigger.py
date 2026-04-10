@@ -18,11 +18,19 @@ client = Client(account_sid, auth_token)
 
 
 def trigger_call():
+    initial_twiml = (
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+        "<Response>"
+        "<Say voice=\"alice\">Speak after the beep.</Say>"
+        f"<Record action=\"{ngrok_url}/process-recording\" method=\"POST\" "
+        "maxLength=\"4\" timeout=\"2\" playBeep=\"true\" trim=\"trim-silence\" />"
+        "</Response>"
+    )
+
     call = client.calls.create(
         from_="+16066590277",  # your Twilio number
         to="+917678507004",    # fixed number (your phone)
-        url=f"{ngrok_url}/incoming_call",
-        method="GET"
+        twiml=initial_twiml
     )
 
     print("Call SID:", call.sid)

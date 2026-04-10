@@ -7,6 +7,7 @@ const env = require('../config/env');
 const sttService = require('../services/stt.service');
 const ttsService = require('../services/tts.service');
 const HttpError = require('../utils/http-error');
+const siteData = require('../data/site-data');
 
 function getChunkExtension(file) {
   const mimeType = (file.mimetype || '').toLowerCase();
@@ -207,6 +208,11 @@ async function handleAudioConversation(req, res) {
     } catch (err) {
       console.error('TTS ERROR:', err.message);
     }
+
+    siteData.registerTranscriptAnalysis({
+      sessionId,
+      transcript
+    });
 
     return res.json({
       success: true,

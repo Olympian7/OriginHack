@@ -73,7 +73,14 @@
                      return;
                  }
 
-             tableBody.innerHTML = data.callLogs.map((log) => `
+             tableBody.innerHTML = data.callLogs.map((log) => {
+                const transcript = (log.transcript || '').trim();
+                const transcriptText = transcript || 'Transcript not available for this entry.';
+                const intentLabel = log.intentAnalysis?.label || 'Unknown';
+                const intentConfidence = Number(log.intentAnalysis?.confidence || 0);
+                const intentReason = log.intentAnalysis?.reason || 'No keyword evidence found.';
+
+                return `
                 <tr>
                     <td class="pl-8">
                         <span class="block font-bold text-white text-lg">${log.sessionId}</span>
@@ -84,7 +91,12 @@
                         <span class="text-[10px] text-secondary">Live record</span>
                     </td>
                     <td class="text-secondary font-medium">${new Date(log.timestamp).toLocaleString()}</td>
-                    <td class="text-sm italic text-gray-400 py-6 pr-6 leading-relaxed">${log.review}</td>
+                    <td class="text-sm text-gray-300 py-6 pr-6 leading-relaxed">
+                        <div class="italic text-gray-400 mb-2">${log.review}</div>
+                        <div class="text-[11px] text-accent font-bold uppercase tracking-widest mb-1">Intent: ${intentLabel} (${intentConfidence}%)</div>
+                        <div class="text-[11px] text-secondary mb-2">${intentReason}</div>
+                        <div class="text-[11px] text-white/90 break-words">${transcriptText}</div>
+                    </td>
                     <td class="py-6 pr-6 bg-white/[0.01]">
                         <div class="flex flex-col gap-3">
                             <button class="flex justify-center items-center gap-2 text-[10px] font-black uppercase tracking-widest text-white bg-accent/20 border border-accent/40 px-4 py-2 rounded-lg hover:bg-accent hover:text-black transition-all w-full"><i data-lucide="play-circle" class="w-4 h-4"></i> Call Recording</button>
@@ -95,7 +107,8 @@
                         <span class="${log.status === 'Synced' ? 'text-green-400 bg-green-400/10 border-green-400/20' : 'text-red-400 bg-red-400/10 border-red-400/20'} inline-block whitespace-nowrap px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border">${log.status}</span>
                     </td>
                 </tr>
-             `).join('');
+             `;
+            }).join('');
              lucide.createIcons();
         });
         const canvas = document.getElementById('star-canvas');

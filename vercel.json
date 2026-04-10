@@ -1,0 +1,48 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/index.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "Frontend/telecaller/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "functions": {
+    "api/index.js": {
+      "includeFiles": [
+        "Backend/src/**",
+        "Backend/storage/**"
+      ],
+      "maxDuration": 60
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.js"
+    },
+    {
+      "src": "/health",
+      "dest": "/api/index.js"
+    },
+    {
+      "src": "/audio/(.*)",
+      "dest": "/api/index.js"
+    },
+    {
+      "src": "/",
+      "dest": "/Frontend/telecaller/landing.html"
+    },
+    {
+      "src": "/(landing|index|contacts|campaigns|call-logs|analytics)",
+      "dest": "/Frontend/telecaller/$1.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/Frontend/telecaller/$1"
+    }
+  ]
+}
